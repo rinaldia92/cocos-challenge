@@ -24,7 +24,7 @@ export class ordersModel extends BaseEntity {
   @Column({ name: 'size' })
   size: number;
 
-  @Column({ name: 'price' })
+  @Column({ name: 'price', type: 'float' })
   price: number;
 
   @Column({ name: 'type' })

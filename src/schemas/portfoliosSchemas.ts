@@ -1,5 +1,5 @@
-import Joi from "joi";
+import Joi from 'joi';
 
 export const portfolioRequestSchema = Joi.object({
-    userId: Joi.number().required(),
+  userId: Joi.number().required(),
 });

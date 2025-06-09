@@ -13,26 +13,20 @@ export class marketDataModel extends BaseEntity {
   @JoinColumn({ name: 'instrumentid' })
   instrument: instrumentsModel;
 
-  @Column({ name: 'high' })
+  @Column({ name: 'high', type: 'float' })
   high: number;
 
-  @Column({ name: 'low' })
+  @Column({ name: 'low', type: 'float' })
   low: number;
 
-  @Column({ name: 'open' })
+  @Column({ name: 'open', type: 'float' })
   open: number;
 
-  @Column({ name: 'close' })
+  @Column({ name: 'close', type: 'float' })
   close: number;
 
-  @Column({ name: 'previousclose' })
+  @Column({ name: 'previousclose', type: 'float' })
   previousClose: number;
-
-  @Column({ name: 'change' })
-  change: number;
-
-  @Column({ name: 'changepercent' })
-  changePercent: number;
 
   @Column({ name: 'date' })
   date: Date;

@@ -1,6 +1,6 @@
 export enum EOrderType {
-  LIMIT = 'limit',
-  MARKET = 'market',
+  LIMIT = 'LIMIT',
+  MARKET = 'MARKET',
 }
 
 export enum EOrderSide {

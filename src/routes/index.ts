@@ -1,16 +1,17 @@
 import { Router } from 'express';
 import { getInstrumentsController } from '../controllers/instrumentsController';
-import { validateRequest } from '../middleware/validateRequest';
-import { instrumentsRequestSchema } from '../schemas/instrumentsSchemas';
-import { portfolioRequestSchema } from '../schemas/portfoliosSchemas';
-import { ordersRequestSchema } from '../schemas/ordersSchemas';
+import {
+  validateRequestInstruments,
+  validateRequestPortfolio,
+  validateRequestOrders,
+} from '../middleware/validateRequest';
 import { getPortfolioController } from '../controllers/portfolioController';
 import { createOrderController } from '../controllers/ordersController';
 
 const router = Router();
 
-router.get('/instruments', validateRequest(instrumentsRequestSchema), getInstrumentsController);
-router.get('/users/:userId/portfolio', validateRequest(portfolioRequestSchema), getPortfolioController);
-router.post('/orders', validateRequest(ordersRequestSchema), createOrderController);
+router.get('/instruments', validateRequestInstruments(), getInstrumentsController);
+router.get('/users/:userId/portfolio', validateRequestPortfolio(), getPortfolioController);
+router.post('/orders', validateRequestOrders(), createOrderController);
 
 export default router;

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { httpStatus } from '../constants/httpStatus';
 
 interface IErrorResponse {
   message: string;
@@ -9,7 +10,14 @@ interface IErrorResponse {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
 export const errorMiddleware = (err: any, req: Request, res: Response, next: NextFunction) => {
-  const statusCode = err.statusCode || 500; // Add constanst for status codes
+  console.error('Error middleware called with:', {
+    message: err.message,
+    statusCode: err.statusCode,
+    internalCode: err.internalCode,
+    stack: err.stack,
+  });
+
+  const statusCode = err.statusCode || httpStatus.INTERNAL_SERVER_ERROR.code;
   const statusTitle = err.statusTitle || 'Internal Server Error';
   const message = err.message || 'Something went wrong';
   const internalCode = err.internalCode;
@@ -20,5 +28,5 @@ export const errorMiddleware = (err: any, req: Request, res: Response, next: Nex
     statusTitle,
     internalCode,
   };
-  return res.status(statusCode).json(errorResponse);
+  return res.status(statusCode).send(errorResponse);
 };

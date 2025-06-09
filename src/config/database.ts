@@ -9,10 +9,10 @@ export const appDataSource = new DataSource({
   password: config.db.password,
   database: process.env.DB_NAME || 'cocos_db',
   synchronize: false,
-  logging: true,
+  logging: ['query'],
   entities: ['dist/models/**/*.js'],
   migrations: ['dist/migrations/**/*.js'],
   ssl: {
-    rejectUnauthorized: false // Permite conexiones sin certificado SSL válido (solo para desarrollo)
-  }
+    rejectUnauthorized: false, // Permite conexiones sin certificado SSL válido (solo para desarrollo)
+  },
 });

@@ -12,15 +12,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Error handling middleware
-app.use(errorMiddleware);
-
 // Routes
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'API is running' });
 });
 
 app.use('/v1/api', routes);
+
+// Error handling middleware (debe ir después de las rutas)
+app.use(errorMiddleware);
 
 app.listen(config.port, async () => {
   if (config.db.host) {
