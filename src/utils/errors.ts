@@ -31,3 +31,6 @@ export const defaultError = createInternalError(
 
 export const NOT_FOUND_ERROR = 'not_found_error';
 export const notFoundError = createInternalError(NOT_FOUND_ERROR, httpStatus.NOT_FOUND.code);
+
+export const INVALID_SCHEMA_ERROR = 'invalid_schema_error';
+export const invalidSchemaError = createInternalError(INVALID_SCHEMA_ERROR, httpStatus.UNPROCESSABLE_ENTITY.code);

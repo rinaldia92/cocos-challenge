@@ -2,10 +2,9 @@ import { appDataSource } from '../config/database';
 import { EOrderSide, EOrderType, EOrderStatus } from '../enums/orders';
 import { IOrderRequest } from '../interfaces/orders';
 import { ordersModel } from '../models/orders';
-import { createOrderRepository, getOrdersBy, getOrdersByUserId } from '../repositories/orders';
+import { createOrderRepository, getOrdersBy } from '../repositories/orders';
 import { getMarketDataByInstrumentId } from '../repositories/marketData';
 import { notFoundError } from '../utils/errors';
-import { EntityManager } from 'typeorm';
 import { getInstrumentById } from '../repositories/instruments';
 import { marketDataModel } from '../models/marketData';
 

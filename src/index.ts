@@ -1,29 +1,9 @@
-import 'dotenv/config';
-import express, { Request, Response } from 'express';
-import cors from 'cors';
 import { appDataSource } from './config/database';
 import { config } from './config';
-import { errorMiddleware } from './middleware/errorMiddleware';
-import routes from './routes';
+import app from './app';
 
-const app = express();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Routes
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'API is running' });
-});
-
-app.use('/v1/api', routes);
-
-// Error handling middleware (debe ir después de las rutas)
-app.use(errorMiddleware);
-
-app.listen(config.port, async () => {
-  if (config.db.host) {
+const startServer = async () => {
+  if (config.environment !== 'testing' && config.db.host) {
     try {
       await appDataSource.initialize();
       console.info('Database connection established');
@@ -32,4 +12,14 @@ app.listen(config.port, async () => {
       process.exit(1);
     }
   }
-});
+
+  app.listen(config.port, () => {
+    console.info(`Server is running on port ${config.port}`);
+  });
+};
+
+if (config.environment !== 'testing') {
+  startServer();
+}
+
+export default app;

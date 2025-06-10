@@ -8,6 +8,8 @@ import { marketDataModel } from '../models/marketData';
 import { getInstrumentsByIds } from '../repositories/instruments';
 import { instrumentsModel } from '../models/instruments';
 import { round } from '../utils/commons';
+import { getUserById } from '../repositories/users';
+import { notFoundError } from '../utils/errors';
 
 const calculateAvailableCash = (orders: ordersModel[]) => {
   const totalCashIn = orders
@@ -46,7 +48,9 @@ const calculatePosition = (
   }, 0);
   const averagePrice = calculateAveragePrice(orders);
 
-  const currentPrice = marketData.sort((a, b) => b.date.getTime() - a.date.getTime())[0].close;
+  const currentPrice = Number(
+    marketData.sort((a, b) => b.date.getTime() - a.date.getTime())[0].close,
+  );
 
   const totalValue = netQuantity * currentPrice;
 
@@ -85,7 +89,19 @@ export const getPortfolioService = async (userId: number) => {
   const response: any = {};
 
   await appDataSource.transaction(async (manager) => {
+    const user = await getUserById(userId, manager);
+    if (!user) {
+      throw notFoundError(`user with id ${userId} not found`);
+    }
+
     const orders = await getOrdersBy({ userId, status: EOrderStatus.FILLED }, manager);
+    if (orders.length === 0) {
+      response['availableCash'] = 0;
+      response['positions'] = [];
+      response['totalValue'] = 0;
+      return;
+    }
+
     const instrumentIds = orders.map((order) => order.instrumentId);
     const uniqueInstrumentIds = [...new Set(instrumentIds)];
     const marketData = await getMarketDataByInstrumentIds(instrumentIds, manager);

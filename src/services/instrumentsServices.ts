@@ -5,18 +5,18 @@ const getInstrumentsService = async ({
   ticker,
   name,
   limit = 10,
-  offset = 0,
+  page = 1,
 }: {
   ticker?: string;
   name?: string;
   limit?: number;
-  offset?: number;
+  page?: number;
 }): Promise<instrumentsModel[]> => {
   const instruments = await getInstrumentsRepository({
     ticker,
     name,
     limit,
-    offset,
+    page,
   });
   return instruments;
 };

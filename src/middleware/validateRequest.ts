@@ -4,17 +4,15 @@ import { Schema } from 'joi';
 import { instrumentsRequestSchema } from '../schemas/instrumentsSchemas';
 import { portfolioRequestSchema } from '../schemas/portfoliosSchemas';
 import { ordersRequestSchema } from '../schemas/ordersSchemas';
+import { invalidSchemaError } from '../utils/errors';
 
 const validateRequest = (schema: Schema, input: any) => {
   const { error } = schema.validate(input, { abortEarly: false });
 
   if (error) {
-    const errors = error.details.map((detail) => ({
-      message: detail.message,
-      path: detail.path,
-    }));
+    const errors = error.details.map((detail) => detail.message);
 
-    throw new Error(JSON.stringify(errors));
+    throw invalidSchemaError(errors.join(', '));
   }
 };
 

@@ -1,4 +1,4 @@
-import { In, EntityManager } from 'typeorm';
+import { In, EntityManager, Like } from 'typeorm';
 import { instrumentsModel } from '../models/instruments';
 import { appDataSource } from '../config/database';
 
@@ -7,12 +7,12 @@ export const getInstrumentsRepository = async (
     ticker,
     name,
     limit = 10,
-    offset = 0,
+    page = 1,
   }: {
     ticker?: string;
     name?: string;
     limit?: number;
-    offset?: number;
+    page?: number;
   },
   manager?: EntityManager,
 ) => {
@@ -21,11 +21,14 @@ export const getInstrumentsRepository = async (
     : appDataSource.getRepository(instrumentsModel);
   const instruments = await repository.find({
     where: {
-      ticker: ticker,
-      name: name,
+      ...(ticker && { ticker: Like(`%${ticker.toUpperCase()}%`) }),
+      ...(name && { name: Like(`%${name.toUpperCase()}%`) }),
     },
-    skip: offset,
+    skip: (page - 1) * limit,
     take: limit,
+    order: {
+      id: 'ASC',
+    },
   });
   return instruments;
 };
