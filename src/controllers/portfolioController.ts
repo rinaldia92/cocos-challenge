@@ -7,7 +7,7 @@ export const getPortfolioController = async (req: Request, res: Response, next: 
   try {
     const { userId } = req.params;
     const portfolio = await getPortfolioService(userId as unknown as number);
-    return res.status(httpStatus.OK.code).json(portfolio);
+    return res.status(httpStatus.OK.code).json({ portfolio });
   } catch (error) {
     return next(error);
   }

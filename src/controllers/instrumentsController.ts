@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { getInstrumentsService } from '../services/instrumentsServices';
+import { httpStatus } from '../constants/httpStatus';
 
 export const getInstrumentsController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -10,7 +11,7 @@ export const getInstrumentsController = async (req: Request, res: Response, next
       limit: limit ? parseInt(limit as string) : 10,
       page: page ? parseInt(page as string) : 1,
     });
-    return res.status(200).json({ instruments });
+    return res.status(httpStatus.OK.code).send({ instruments });
   } catch (error) {
     return next(error);
   }

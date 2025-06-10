@@ -101,6 +101,20 @@ La API está versionada y todos los endpoints están bajo el prefijo `/v1/api`
     }
     ```
 
+## Documentación API (Swagger)
+
+La API está documentada usando Swagger/OpenAPI. Puedes acceder a la documentación interactiva en:
+
+```
+http://localhost:3000/api-docs
+```
+
+La documentación incluye:
+- Descripción detallada de todos los endpoints
+- Schemas de datos (Instruments, Orders, Portfolio)
+- Ejemplos de requests y responses
+- Posibles códigos de error
+
 ## Tests
 
 ```bash
@@ -139,6 +153,7 @@ tests/
 - PostgreSQL
 - Jest (Testing)
 - Joi (Validación)
+- Swagger/OpenAPI (Documentación API)
 
 ## Scripts Disponibles
 
