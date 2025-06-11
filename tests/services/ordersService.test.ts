@@ -111,6 +111,7 @@ describe('Orders Service', () => {
         type: EOrderType.LIMIT,
         side: EOrderSide.BUY,
         quantity: 10,
+        priceLimit: 10000,
       };
 
       userRepositoryMock.mockResolvedValue(getUserByIdMock(userId));
@@ -142,12 +143,14 @@ describe('Orders Service', () => {
         instrumentId,
         type: EOrderType.LIMIT,
         side: EOrderSide.BUY,
-        quantity: 10,
+        amount: 10000,
+        priceLimit: 10000,
       };
 
+      const marketData = getLastMarketDataByInstrumentIdMock(instrumentId);
       userRepositoryMock.mockResolvedValue(getUserByIdMock(userId));
       instrumentsRepositoryMock.mockResolvedValue(getInstrumentByIdMock(instrumentId));
-      marketDataRepositoryMock.mockResolvedValue(getLastMarketDataByInstrumentIdMock(instrumentId));
+      marketDataRepositoryMock.mockResolvedValue(marketData);
       getOrdersRepositoryMock.mockResolvedValue(
         getOrdersByMock({ userId, status: EOrderStatus.FILLED }),
       );
@@ -155,12 +158,14 @@ describe('Orders Service', () => {
 
       const result = await createOrderService(orderRequest);
 
+      const expectedQuantity = Math.floor(orderRequest.amount / marketData!.close);
+
       expect(result).toMatchObject({
         datetime: expect.any(Date),
         instrumentId,
         price: expect.any(Number),
         side: orderRequest.side,
-        size: orderRequest.quantity,
+        size: expectedQuantity,
         status: EOrderStatus.NEW,
         type: orderRequest.type,
         userId,
@@ -209,6 +214,7 @@ describe('Orders Service', () => {
         type: EOrderType.LIMIT,
         side: EOrderSide.BUY,
         quantity: 99999999999999,
+        priceLimit: 10000,
       };
 
       userRepositoryMock.mockResolvedValue(getUserByIdMock(userId));
@@ -217,6 +223,41 @@ describe('Orders Service', () => {
       getOrdersRepositoryMock.mockResolvedValue(
         getOrdersByMock({ userId, status: EOrderStatus.FILLED }),
       );
+      createOrderRepositoryMock.mockImplementation((order) => Promise.resolve(order));
+
+      const result = await createOrderService(orderRequest);
+
+      expect(result).toMatchObject({
+        datetime: expect.any(Date),
+        instrumentId,
+        price: expect.any(Number),
+        side: orderRequest.side,
+        size: orderRequest.quantity,
+        status: EOrderStatus.REJECTED,
+        type: orderRequest.type,
+        userId,
+      });
+    });
+
+    test('should create a limit order with status rejected because the user wants to buy but price limit is less than market data', async () => {
+      const userId = 1;
+      const instrumentId = 47;
+      const orderRequest = {
+        userId,
+        instrumentId,
+        type: EOrderType.LIMIT,
+        side: EOrderSide.BUY,
+        quantity: 10,
+        priceLimit: 10,
+      };
+
+      const marketData = getLastMarketDataByInstrumentIdMock(instrumentId);
+      userRepositoryMock.mockResolvedValue(getUserByIdMock(userId));
+      instrumentsRepositoryMock.mockResolvedValue(getInstrumentByIdMock(instrumentId));
+      marketDataRepositoryMock.mockResolvedValue(marketData);
+      getOrdersRepositoryMock.mockResolvedValue(
+        getOrdersByMock({ userId, status: EOrderStatus.FILLED }),
+      );  
       createOrderRepositoryMock.mockImplementation((order) => Promise.resolve(order));
 
       const result = await createOrderService(orderRequest);
@@ -275,6 +316,7 @@ describe('Orders Service', () => {
         type: EOrderType.LIMIT,
         side: EOrderSide.SELL,
         quantity: 10,
+        priceLimit: 1,
       };
 
       userRepositoryMock.mockResolvedValue(getUserByIdMock(userId));
@@ -341,11 +383,47 @@ describe('Orders Service', () => {
         type: EOrderType.LIMIT,
         side: EOrderSide.SELL,
         quantity: 99999999999999,
+        priceLimit: 1,
       };
 
       userRepositoryMock.mockResolvedValue(getUserByIdMock(userId));
       instrumentsRepositoryMock.mockResolvedValue(getInstrumentByIdMock(instrumentId));
       marketDataRepositoryMock.mockResolvedValue(getLastMarketDataByInstrumentIdMock(instrumentId));
+      getOrdersRepositoryMock.mockResolvedValue(
+        getOrdersByMock({ userId, status: EOrderStatus.FILLED }),
+      );
+      createOrderRepositoryMock.mockImplementation((order) => Promise.resolve(order));
+
+      const result = await createOrderService(orderRequest);
+
+      expect(result).toMatchObject({
+        datetime: expect.any(Date),
+        instrumentId,
+        price: expect.any(Number),
+        side: orderRequest.side,
+        size: orderRequest.quantity,
+        status: EOrderStatus.REJECTED,
+        type: orderRequest.type,
+        userId,
+      });
+    });
+
+    test('should create a limit order with status rejected because the user wants to sell but price limit is greater than market data', async () => {
+      const userId = 1;
+      const instrumentId = 47;
+      const orderRequest = {
+        userId,
+        instrumentId,
+        type: EOrderType.LIMIT,
+        side: EOrderSide.SELL,
+        quantity: 10,
+        priceLimit: 1000,
+      };
+
+      const marketData = getLastMarketDataByInstrumentIdMock(instrumentId);
+      userRepositoryMock.mockResolvedValue(getUserByIdMock(userId));
+      instrumentsRepositoryMock.mockResolvedValue(getInstrumentByIdMock(instrumentId));
+      marketDataRepositoryMock.mockResolvedValue(marketData);
       getOrdersRepositoryMock.mockResolvedValue(
         getOrdersByMock({ userId, status: EOrderStatus.FILLED }),
       );

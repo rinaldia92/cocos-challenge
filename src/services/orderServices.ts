@@ -33,6 +33,8 @@ const createBuyOrder = async ({
 
   const availableCash = calculateAvailableCash(orders);
 
+  logger.info(`Available cash: ${availableCash}`);
+
   let size = orderRequest.quantity;
 
   if (!size) {
@@ -40,6 +42,8 @@ const createBuyOrder = async ({
   }
 
   const totalAmount = size * currentPrice;
+
+  logger.info(`Total amount: ${totalAmount}`);
 
   orderToCreate.size = size;
   orderToCreate.price = currentPrice;
@@ -50,14 +54,23 @@ const createBuyOrder = async ({
       `Buy order rejected for user ${orderRequest.userId} because total amount is greater than available cash`,
     );
     orderToCreate.status = EOrderStatus.REJECTED;
+    return;
+  }
+
+  if (orderRequest.type === EOrderType.LIMIT && orderToCreate.price > orderRequest.priceLimit!) {
+    logger.debug(
+      `Buy order rejected for user ${orderRequest.userId} because price is greater than price limit`,
+    );
+    orderToCreate.status = EOrderStatus.REJECTED;
+    return;
+  }
+
+  if (orderRequest.type === EOrderType.MARKET) {
+    logger.debug(`Buy order filled for user ${orderRequest.userId}`);
+    orderToCreate.status = EOrderStatus.FILLED;
   } else {
-    if (orderRequest.type === EOrderType.MARKET) {
-      logger.debug(`Buy order filled for user ${orderRequest.userId}`);
-      orderToCreate.status = EOrderStatus.FILLED;
-    } else {
-      logger.debug(`Buy order new for user ${orderRequest.userId}`);
-      orderToCreate.status = EOrderStatus.NEW;
-    }
+    logger.debug(`Buy order new for user ${orderRequest.userId}`);
+    orderToCreate.status = EOrderStatus.NEW;
   }
 };
 
@@ -84,19 +97,28 @@ const createSellOrder = async ({
   orderToCreate.size = orderRequest.quantity!;
   orderToCreate.price = marketData.close;
 
+  if (orderRequest.type === EOrderType.LIMIT && orderToCreate.price < orderRequest.priceLimit!) {
+    logger.debug(
+      `Sell order rejected for user ${orderRequest.userId} because price is less than price limit`,
+    );
+    orderToCreate.status = EOrderStatus.REJECTED;
+    return;
+  }
+
   if (netQuantity < orderRequest.quantity!) {
     logger.debug(
       `Sell order rejected for user ${orderRequest.userId} because net quantity is less than quantity`,
     );
     orderToCreate.status = EOrderStatus.REJECTED;
+    return;
+  }
+
+  if (orderRequest.type === EOrderType.MARKET) {
+    logger.debug(`Sell order filled for user ${orderRequest.userId}`);
+    orderToCreate.status = EOrderStatus.FILLED;
   } else {
-    if (orderRequest.type === EOrderType.MARKET) {
-      logger.debug(`Sell order filled for user ${orderRequest.userId}`);
-      orderToCreate.status = EOrderStatus.FILLED;
-    } else {
-      logger.debug(`Sell order new for user ${orderRequest.userId}`);
-      orderToCreate.status = EOrderStatus.NEW;
-    }
+    logger.debug(`Sell order new for user ${orderRequest.userId}`);
+    orderToCreate.status = EOrderStatus.NEW;
   }
 };
 

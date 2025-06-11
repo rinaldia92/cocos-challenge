@@ -5,7 +5,7 @@ export interface IOrderRequest {
   instrumentId: number;
   quantity?: number;
   amount?: number;
-  price?: number;
+  priceLimit?: number;
   side: EOrderSide;
   type: EOrderType;
 }
