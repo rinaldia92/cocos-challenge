@@ -16,25 +16,33 @@ const config: Config.InitialOptions = {
   coveragePathIgnorePatterns: ['/tests/'],
   coverageThreshold: {
     global: {
-      branches: 0,
-      functions: 0,
-      lines: 0,
-      statements: 0,
+      branches: 50,
+      functions: 80,
+      lines: 80,
+      statements: 80,
     },
   },
   reporters: [
     'default',
-    ['jest-junit', {
-      outputDirectory: './coverage/apps',
-      outputName: 'junit.xml',
-      classNameTemplate: '{classname}',
-      titleTemplate: '{title}',
-      ancestorSeparator: ' › ',
-      usePathForSuiteName: true
-    }]
+    [
+      'jest-junit',
+      {
+        outputDirectory: './coverage/apps',
+        outputName: 'junit.xml',
+        classNameTemplate: '{classname}',
+        titleTemplate: '{title}',
+        ancestorSeparator: ' › ',
+        usePathForSuiteName: true,
+      },
+    ],
   ],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
+  forceExit: true,
+  clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true,
+  testTimeout: 10000,
 };
 
 export default config;

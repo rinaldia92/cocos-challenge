@@ -36,10 +36,10 @@ export const setupDatabaseMock = () => {
   return {
     transactionMock,
     mockEntityManager,
-    mockQueryRunner
+    mockQueryRunner,
   };
 };
 
 export const clearDatabaseMocks = () => {
   jest.clearAllMocks();
-}; 
+};

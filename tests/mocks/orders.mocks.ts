@@ -144,3 +144,11 @@ export const getOrdersByMock = (searchParams: OrderSearchParams): Partial<orders
     });
   });
 };
+
+export const createOrderMock = (order: Partial<ordersModel>): ordersModel => {
+  return {
+    ...order,
+    id: 12,
+    datetime: new Date(),
+  } as unknown as ordersModel;
+};

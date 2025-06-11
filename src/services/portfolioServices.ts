@@ -102,9 +102,11 @@ export const getPortfolioService = async (userId: number) => {
       return;
     }
 
+
     const instrumentIds = orders.map((order) => order.instrumentId);
     const uniqueInstrumentIds = [...new Set(instrumentIds)];
     const marketData = await getMarketDataByInstrumentIds(instrumentIds, manager);
+
     const instruments = await getInstrumentsByIds(instrumentIds, manager);
 
     const instrumentsMonedaIds = instruments
@@ -115,7 +117,9 @@ export const getPortfolioService = async (userId: number) => {
     );
 
     const availableCash = calculateAvailableCash(orders);
+
     const positions = calculatePositions(orders, intrumentsIdsToUse, instruments, marketData);
+
     const totalValue =
       positions.reduce((acc, position) => acc + position.totalValue, 0) + availableCash;
 

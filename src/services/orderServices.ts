@@ -3,10 +3,11 @@ import { EOrderSide, EOrderType, EOrderStatus } from '../enums/orders';
 import { IOrderRequest } from '../interfaces/orders';
 import { ordersModel } from '../models/orders';
 import { createOrderRepository, getOrdersBy } from '../repositories/orders';
-import { getMarketDataByInstrumentId } from '../repositories/marketData';
+import { getLastMarketDataByInstrumentId } from '../repositories/marketData';
 import { notFoundError } from '../utils/errors';
 import { getInstrumentById } from '../repositories/instruments';
 import { marketDataModel } from '../models/marketData';
+import { getUserById } from '../repositories/users';
 
 const calculateSize = (amount: number, price: number) => {
   return Math.floor(amount / price);
@@ -108,12 +109,17 @@ const createOrderStrategy: { [key in EOrderSide]?: (args: any) => Promise<void> 
 
 export const createOrderService = async (orderRequest: IOrderRequest) => {
   return appDataSource.transaction(async (manager) => {
+    const user = await getUserById(orderRequest.userId, manager);
+    if (!user) {
+      throw notFoundError('User not found');
+    }
+
     const instrument = await getInstrumentById(orderRequest.instrumentId, manager);
     if (!instrument) {
       throw notFoundError('Instrument not found');
     }
 
-    const marketData = await getMarketDataByInstrumentId(orderRequest.instrumentId, manager);
+    const marketData = await getLastMarketDataByInstrumentId(orderRequest.instrumentId, manager);
     if (!marketData) {
       throw notFoundError('Market data not found');
     }

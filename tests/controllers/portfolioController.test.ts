@@ -4,13 +4,15 @@ import request from 'supertest';
 import '@jest/globals';
 import app from '../../src/app';
 import { notFoundError } from '../../src/utils/errors';
-import { portfolioResponseWithOrdersMock, portfolioResponseWithoutOrdersMock } from '../mocks/portfolio.mocks';
+import {
+  portfolioResponseWithOrdersMock,
+  portfolioResponseWithoutOrdersMock,
+} from '../mocks/portfolio.mocks';
 import { httpStatus } from '../../src/constants/httpStatus';
 
 jest.mock('../../src/services/portfolioServices', () => ({
   getPortfolioService: portfolioServiceMock,
 }));
-
 
 describe('Portfolio Controller', () => {
   describe('GET /v1/api/users/:userId/portfolio', () => {
@@ -18,8 +20,7 @@ describe('Portfolio Controller', () => {
       const userId = 1;
       portfolioServiceMock.mockResolvedValue(portfolioResponseWithOrdersMock);
 
-      const response = await request(app)
-        .get(`/v1/api/users/${userId}/portfolio`);
+      const response = await request(app).get(`/v1/api/users/${userId}/portfolio`);
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('availableCash');
@@ -38,8 +39,7 @@ describe('Portfolio Controller', () => {
       const userId = 1;
       portfolioServiceMock.mockResolvedValue(portfolioResponseWithoutOrdersMock);
 
-      const response = await request(app)
-        .get(`/v1/api/users/${userId}/portfolio`);
+      const response = await request(app).get(`/v1/api/users/${userId}/portfolio`);
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('availableCash');
@@ -54,18 +54,16 @@ describe('Portfolio Controller', () => {
 
       portfolioServiceMock.mockRejectedValue(notFoundError(`user with id ${userId} not found`));
 
-      const response = await request(app)
-        .get(`/v1/api/users/${userId}/portfolio`);
+      const response = await request(app).get(`/v1/api/users/${userId}/portfolio`);
 
       expect(response.status).toBe(404);
       expect(response.body).toHaveProperty('message', `user with id ${userId} not found`);
     });
 
     test('should fail with invalid schema', async () => {
-      const response = await request(app)
-        .get(`/v1/api/users/invalid-user/portfolio`);
+      const response = await request(app).get(`/v1/api/users/invalid-user/portfolio`);
 
       expect(response.status).toBe(httpStatus.UNPROCESSABLE_ENTITY.code);
     });
   });
-}); 
+});

@@ -639,7 +639,7 @@ const marketData = [
     open: 520.0,
     close: 520.0,
     previousClose: 519.0,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 65,
@@ -649,7 +649,7 @@ const marketData = [
     open: 20.5,
     close: 20.5,
     previousClose: 20.5,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 66,
@@ -659,7 +659,7 @@ const marketData = [
     open: 657.5,
     close: 648.5,
     previousClose: 657.5,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 67,
@@ -669,7 +669,7 @@ const marketData = [
     open: 336.0,
     close: 338.0,
     previousClose: 341.5,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 68,
@@ -679,7 +679,7 @@ const marketData = [
     open: 69.0,
     close: 88.7,
     previousClose: 66.0,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 69,
@@ -689,7 +689,7 @@ const marketData = [
     open: 232.0,
     close: 229.5,
     previousClose: 232.0,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 70,
@@ -699,7 +699,7 @@ const marketData = [
     open: 1434.05,
     close: 1397.7,
     previousClose: 1437.55,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 71,
@@ -709,7 +709,7 @@ const marketData = [
     open: 35.8,
     close: 36.0,
     previousClose: 35.95,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 72,
@@ -719,7 +719,7 @@ const marketData = [
     open: 74.9,
     close: 77.0,
     previousClose: 75.0,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 73,
@@ -729,7 +729,7 @@ const marketData = [
     open: 101.0,
     close: 102.0,
     previousClose: 99.7,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 74,
@@ -739,7 +739,7 @@ const marketData = [
     open: 565.0,
     close: 565.0,
     previousClose: 565.0,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 75,
@@ -749,7 +749,7 @@ const marketData = [
     open: 369.65,
     close: 363.0,
     previousClose: 364.8,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 76,
@@ -759,7 +759,7 @@ const marketData = [
     open: 138.0,
     close: 138.0,
     previousClose: 138.0,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 77,
@@ -769,7 +769,7 @@ const marketData = [
     open: 1525.0,
     close: 1502.8,
     previousClose: 1520.25,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 78,
@@ -779,7 +779,7 @@ const marketData = [
     open: 55.0,
     close: 56.1,
     previousClose: 56.1,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 79,
@@ -789,7 +789,7 @@ const marketData = [
     open: 395.0,
     close: 392.5,
     previousClose: 397.5,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 80,
@@ -799,7 +799,7 @@ const marketData = [
     open: 295.0,
     close: 322.0,
     previousClose: 310.0,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 81,
@@ -809,7 +809,7 @@ const marketData = [
     open: 6650.0,
     close: 6640.0,
     previousClose: 6621.5,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 82,
@@ -819,7 +819,7 @@ const marketData = [
     open: 915.8,
     close: 885.8,
     previousClose: 917.75,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 83,
@@ -829,7 +829,7 @@ const marketData = [
     open: 390.0,
     close: 400.5,
     previousClose: 400.5,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 84,
@@ -839,7 +839,7 @@ const marketData = [
     open: 421.5,
     close: 424.25,
     previousClose: 429.45,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 85,
@@ -849,7 +849,7 @@ const marketData = [
     open: 668.0,
     close: 650.0,
     previousClose: 668.0,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 86,
@@ -859,7 +859,7 @@ const marketData = [
     open: 455.0,
     close: 429.0,
     previousClose: 448.0,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 87,
@@ -869,7 +869,7 @@ const marketData = [
     open: 373.0,
     close: 369.5,
     previousClose: 373.0,
-    date: new Date('2023-07-13'),
+    date: new Date('2023-07-14'),
   },
   {
     id: 88,
@@ -1269,8 +1269,8 @@ export const getMarketDataByInstrumentIdsMock = (instrumentIds: number[]): marke
   ) as marketDataModel[];
 };
 
-export const getMarketDataByInstrumentIdMock = (instrumentId: number): marketDataModel | null => {
-  return marketData.find(
-    (marketData) => marketData.instrumentId === instrumentId,
-  ) as marketDataModel | null;
+export const getLastMarketDataByInstrumentIdMock = (instrumentId: number): marketDataModel | null => {
+  const filteredMarketData = marketData.filter((marketData) => marketData.instrumentId === instrumentId);
+  const sortedMarketData = filteredMarketData.sort((a, b) => b.date.getTime() - a.date.getTime());
+  return sortedMarketData[0] as marketDataModel | null;
 };

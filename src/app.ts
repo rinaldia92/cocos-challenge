@@ -19,4 +19,4 @@ app.use('/v1/api', routes);
 // Error handling middleware (debe ir después de las rutas)
 app.use(errorMiddleware);
 
-export default app; 
+export default app;

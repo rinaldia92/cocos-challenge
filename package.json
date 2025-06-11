@@ -7,7 +7,7 @@
     "build": "tsc",
     "start": "npm run build && node dist/index.js",
     "start:watch": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "NODE_ENV=development ts-node-dev --respawn --transpile-only src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:generate": "npm run typeorm migration:generate",
     "migration:run": "npm run typeorm migration:run",
@@ -16,9 +16,9 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
-    "test": "jest --detectOpenHandles --forceExit --runInBand --colors --NODE_ENV=testing",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test": "NODE_ENV=testing jest --detectOpenHandles --forceExit --runInBand --colors",
+    "test:watch": "NODE_ENV=testing jest --watch",
+    "test:coverage": "NODE_ENV=testing jest --coverage"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -37,6 +37,7 @@
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.1",

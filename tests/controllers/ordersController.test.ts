@@ -1,7 +1,15 @@
+const createOrderServiceMock = jest.fn();
+
 import request from 'supertest';
 import '@jest/globals';
 import { EOrderSide, EOrderType, EOrderStatus } from '../../src/enums/orders';
 import app from '../../src/app';
+import { createOrderMock } from '../mocks/orders.mocks';
+import { notFoundError } from '../../src/utils/errors';
+
+jest.mock('../../src/services/orderServices', () => ({
+  createOrderService: createOrderServiceMock,
+}));
 
 describe('Orders Controller', () => {
   describe('POST /v1/api/orders', () => {
@@ -11,12 +19,17 @@ describe('Orders Controller', () => {
         instrumentId: 1,
         type: EOrderType.MARKET,
         side: EOrderSide.BUY,
-        quantity: 10
+        quantity: 10,
       };
 
-      const response = await request(app)
-        .post('/v1/api/orders')
-        .send(orderRequest);
+      createOrderServiceMock.mockResolvedValue(
+        createOrderMock({
+          ...orderRequest,
+          status: EOrderStatus.FILLED,
+        }),
+      );
+
+      const response = await request(app).post('/v1/api/orders').send(orderRequest);
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('id');
@@ -29,12 +42,17 @@ describe('Orders Controller', () => {
         instrumentId: 1,
         type: EOrderType.MARKET,
         side: EOrderSide.BUY,
-        quantity: 999999 // cantidad muy alta para asegurar fondos insuficientes
+        quantity: 999999,
       };
 
-      const response = await request(app)
-        .post('/v1/api/orders')
-        .send(orderRequest);
+      createOrderServiceMock.mockResolvedValue(
+        createOrderMock({
+          ...orderRequest,
+          status: EOrderStatus.REJECTED,
+        }),
+      );
+
+      const response = await request(app).post('/v1/api/orders').send(orderRequest);
 
       expect(response.status).toBe(201);
       expect(response.body.status).toBe(EOrderStatus.REJECTED);
@@ -43,18 +61,18 @@ describe('Orders Controller', () => {
     it('should return 404 when instrument not found', async () => {
       const orderRequest = {
         userId: 1,
-        instrumentId: 99999, // ID que no existe
+        instrumentId: 99999,
         type: EOrderType.MARKET,
         side: EOrderSide.BUY,
-        quantity: 10
+        quantity: 10,
       };
 
-      const response = await request(app)
-        .post('/v1/api/orders')
-        .send(orderRequest);
+      createOrderServiceMock.mockRejectedValue(notFoundError('Instrument not found'));
+
+      const response = await request(app).post('/v1/api/orders').send(orderRequest);
 
       expect(response.status).toBe(404);
-      expect(response.body).toHaveProperty('message', 'Market data not found');
+      expect(response.body).toHaveProperty('message', 'Instrument not found');
     });
   });
-}); 
+});
