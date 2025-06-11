@@ -8,25 +8,10 @@ import { notFoundError } from '../utils/errors';
 import { getInstrumentById } from '../repositories/instruments';
 import { marketDataModel } from '../models/marketData';
 import { getUserById } from '../repositories/users';
+import { calculateAvailableCash } from '../utils/commons';
 
 const calculateSize = (amount: number, price: number) => {
   return Math.floor(amount / price);
-};
-
-const calculateAvailableCash = (orders: ordersModel[]) => {
-  const totalCashIn = orders
-    .filter((order) => order.side === EOrderSide.CASH_IN)
-    .reduce((acc, order) => acc + order.size, 0);
-  const totalCashOut = orders
-    .filter((order) => order.side === EOrderSide.CASH_OUT)
-    .reduce((acc, order) => acc + order.size, 0);
-  const totalBuy = orders
-    .filter((order) => order.side === EOrderSide.BUY)
-    .reduce((acc, order) => acc + order.size, 0);
-  const totalSell = orders
-    .filter((order) => order.side === EOrderSide.SELL)
-    .reduce((acc, order) => acc + order.size, 0);
-  return totalCashIn - totalCashOut - totalBuy + totalSell;
 };
 
 const createBuyOrder = async ({
@@ -59,11 +44,7 @@ const createBuyOrder = async ({
   if (totalAmount > availableCash) {
     orderToCreate.status = EOrderStatus.REJECTED;
   } else {
-    if (orderRequest.type === EOrderType.MARKET) {
-      orderToCreate.status = EOrderStatus.FILLED;
-    } else {
-      orderToCreate.status = EOrderStatus.NEW;
-    }
+    orderToCreate.status = orderRequest.type === EOrderType.MARKET ? EOrderStatus.FILLED : EOrderStatus.NEW;
   }
 };
 
@@ -81,10 +62,8 @@ const createSellOrder = async ({
   const ordersToUse = orders.filter((order) => order.instrumentId === orderRequest.instrumentId);
   const netQuantity = ordersToUse.reduce((acc, order) => {
     if (order.side === EOrderSide.BUY) {
-      console.log(`BUY order.size: ${order.size}`);
       return acc + order.size;
     }
-    console.log(`SELL order.size: ${order.size}`);
     return acc - order.size;
   }, 0);
 

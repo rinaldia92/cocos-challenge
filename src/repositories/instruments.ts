@@ -1,19 +1,10 @@
 import { In, EntityManager, Like } from 'typeorm';
 import { instrumentsModel } from '../models/instruments';
 import { appDataSource } from '../config/database';
+import { IInstrumentRequest } from '../interfaces/instruments';
 
 export const getInstrumentsRepository = async (
-  {
-    ticker,
-    name,
-    limit = 10,
-    page = 1,
-  }: {
-    ticker?: string;
-    name?: string;
-    limit?: number;
-    page?: number;
-  },
+  { ticker, name, limit = 10, page = 1 }: IInstrumentRequest,
   manager?: EntityManager,
 ) => {
   const repository = manager
@@ -22,7 +13,7 @@ export const getInstrumentsRepository = async (
   const instruments = await repository.find({
     where: {
       ...(ticker && { ticker: Like(`%${ticker.toUpperCase()}%`) }),
-      ...(name && { name: Like(`%${name.toUpperCase()}%`) }),
+      ...(name && { name: Like(`%${name}%`) }),
     },
     skip: (page - 1) * limit,
     take: limit,

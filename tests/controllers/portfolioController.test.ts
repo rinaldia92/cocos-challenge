@@ -23,10 +23,12 @@ describe('Portfolio Controller', () => {
       const response = await request(app).get(`/v1/api/users/${userId}/portfolio`);
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('availableCash');
-      expect(response.body).toHaveProperty('positions');
-      expect(Array.isArray(response.body.positions)).toBe(true);
-      response.body.positions.forEach((position: any) => {
+      expect(response.body).toHaveProperty('portfolio');
+      console.log(response.body.portfolio);
+      expect(response.body.portfolio).toHaveProperty('availableCash');
+      expect(response.body.portfolio).toHaveProperty('positions');
+      expect(Array.isArray(response.body.portfolio.positions)).toBe(true);
+      response.body.portfolio.positions.forEach((position: any) => {
         expect(position).toHaveProperty('instrumentId');
         expect(position).toHaveProperty('instrumentName');
         expect(position).toHaveProperty('quantity');
@@ -42,11 +44,12 @@ describe('Portfolio Controller', () => {
       const response = await request(app).get(`/v1/api/users/${userId}/portfolio`);
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('availableCash');
-      expect(response.body).toHaveProperty('positions');
-      expect(response.body.positions).toHaveLength(0);
-      expect(response.body.availableCash).toBe(0);
-      expect(response.body.totalValue).toBe(0);
+      expect(response.body).toHaveProperty('portfolio');
+      expect(response.body.portfolio).toHaveProperty('availableCash');
+      expect(response.body.portfolio).toHaveProperty('positions');
+      expect(response.body.portfolio.positions).toHaveLength(0);
+      expect(response.body.portfolio.availableCash).toBe(0);
+      expect(response.body.portfolio.totalValue).toBe(0);
     });
 
     test('should fail for non-existent user', async () => {

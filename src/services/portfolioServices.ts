@@ -7,26 +7,10 @@ import { EInstrumentType } from '../enums/instruments';
 import { marketDataModel } from '../models/marketData';
 import { getInstrumentsByIds } from '../repositories/instruments';
 import { instrumentsModel } from '../models/instruments';
-import { round } from '../utils/commons';
+import { calculateAvailableCash, round } from '../utils/commons';
 import { getUserById } from '../repositories/users';
 import { notFoundError } from '../utils/errors';
-
-const calculateAvailableCash = (orders: ordersModel[]) => {
-  const totalCashIn = orders
-    .filter((order) => order.side === EOrderSide.CASH_IN)
-    .reduce((acc, order) => acc + order.size, 0);
-  const totalCashOut = orders
-    .filter((order) => order.side === EOrderSide.CASH_OUT)
-    .reduce((acc, order) => acc + order.size, 0);
-  const totalBuy = orders
-    .filter((order) => order.side === EOrderSide.BUY)
-    .reduce((acc, order) => acc + order.size * order.price, 0);
-  const totalSell = orders
-    .filter((order) => order.side === EOrderSide.SELL)
-    .reduce((acc, order) => acc + order.size * order.price, 0);
-
-  return totalCashIn - totalCashOut - totalBuy + totalSell;
-};
+import { IPortfolioResponse } from '../interfaces/porfolio';
 
 const calculateAveragePrice = (orders: ordersModel[]) => {
   const buyOrders = orders.filter((order) => order.side === EOrderSide.BUY);
@@ -48,6 +32,7 @@ const calculatePosition = (
   }, 0);
   const averagePrice = calculateAveragePrice(orders);
 
+  // revisar si se puede traer facilmente el ultimo market data por instrument desde typeorm
   const currentPrice = Number(
     marketData.sort((a, b) => b.date.getTime() - a.date.getTime())[0].close,
   );
@@ -86,7 +71,11 @@ const calculatePositions = (
 };
 
 export const getPortfolioService = async (userId: number) => {
-  const response: any = {};
+  const response: IPortfolioResponse = {
+    availableCash: 0,
+    positions: [],
+    totalValue: 0,
+  };
 
   await appDataSource.transaction(async (manager) => {
     const user = await getUserById(userId, manager);
@@ -96,9 +85,6 @@ export const getPortfolioService = async (userId: number) => {
 
     const orders = await getOrdersBy({ userId, status: EOrderStatus.FILLED }, manager);
     if (orders.length === 0) {
-      response['availableCash'] = 0;
-      response['positions'] = [];
-      response['totalValue'] = 0;
       return;
     }
 
@@ -123,9 +109,9 @@ export const getPortfolioService = async (userId: number) => {
     const totalValue =
       positions.reduce((acc, position) => acc + position.totalValue, 0) + availableCash;
 
-    response['availableCash'] = availableCash;
-    response['positions'] = positions;
-    response['totalValue'] = totalValue;
+    response.availableCash = availableCash;
+    response.positions = positions;
+    response.totalValue = totalValue;
   });
   return response;
 };
