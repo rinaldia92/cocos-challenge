@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createOrderController } from '../controllers/ordersController';
-import { validateRequestInstruments, validateRequestOrders } from '../middleware/validateRequest';
+import { validateRequestOrders } from '../middleware/validateRequest';
 const router = Router();
 
 /**
@@ -63,4 +63,4 @@ const router = Router();
  */
 router.post('/', validateRequestOrders(), createOrderController);
 
-export default router; 
+export default router;

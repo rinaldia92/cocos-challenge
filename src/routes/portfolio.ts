@@ -99,4 +99,4 @@ const router = Router();
  */
 router.get('/:userId/portfolio', validateRequestPortfolio(), getPortfolioController);
 
-export default router; 
+export default router;

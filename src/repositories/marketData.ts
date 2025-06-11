@@ -16,7 +16,10 @@ export const getMarketDataByInstrumentIds = async (
   });
 };
 
-export const getLastMarketDataByInstrumentId = async (instrumentId: number, manager: EntityManager) => {
+export const getLastMarketDataByInstrumentId = async (
+  instrumentId: number,
+  manager: EntityManager,
+) => {
   const repository = manager
     ? manager.getRepository(marketDataModel)
     : appDataSource.getRepository(marketDataModel);

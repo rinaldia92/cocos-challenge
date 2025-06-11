@@ -12,7 +12,7 @@ const options: swaggerJSDoc.Options = {
       {
         url: '/v1/api',
         description: 'API v1',
-      }
+      },
     ],
     components: {
       schemas: {
@@ -146,4 +146,4 @@ const options: swaggerJSDoc.Options = {
   apis: ['./src/routes/*.ts'], // Rutas donde están los comentarios de Swagger
 };
 
-export const swaggerSpec = swaggerJSDoc(options); 
+export const swaggerSpec = swaggerJSDoc(options);

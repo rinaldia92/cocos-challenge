@@ -11,6 +11,9 @@ import { calculateAvailableCash, round } from '../utils/commons';
 import { getUserById } from '../repositories/users';
 import { notFoundError } from '../utils/errors';
 import { IPortfolioResponse } from '../interfaces/porfolio';
+import { createNamedLogger } from '../utils/logger';
+
+const logger = createNamedLogger('PortfolioServices');
 
 const calculateAveragePrice = (orders: ordersModel[]) => {
   const buyOrders = orders.filter((order) => order.side === EOrderSide.BUY);
@@ -78,21 +81,26 @@ export const getPortfolioService = async (userId: number) => {
   };
 
   await appDataSource.transaction(async (manager) => {
+    logger.debug(`Getting user ${userId}`);
     const user = await getUserById(userId, manager);
     if (!user) {
       throw notFoundError(`user with id ${userId} not found`);
     }
 
+    logger.debug(`Getting orders for user ${userId}`);
     const orders = await getOrdersBy({ userId, status: EOrderStatus.FILLED }, manager);
     if (orders.length === 0) {
+      logger.info(`No orders found for user ${userId}, returning empty portfolio`);
       return;
     }
 
-
     const instrumentIds = orders.map((order) => order.instrumentId);
     const uniqueInstrumentIds = [...new Set(instrumentIds)];
+
+    logger.debug(`Getting market data for user ${userId}`);
     const marketData = await getMarketDataByInstrumentIds(instrumentIds, manager);
 
+    logger.debug(`Getting instruments for user ${userId}`);
     const instruments = await getInstrumentsByIds(instrumentIds, manager);
 
     const instrumentsMonedaIds = instruments
@@ -113,5 +121,6 @@ export const getPortfolioService = async (userId: number) => {
     response.positions = positions;
     response.totalValue = totalValue;
   });
+  logger.info(`Returning portfolio for user ${userId}: ${JSON.stringify(response)}`);
   return response;
 };

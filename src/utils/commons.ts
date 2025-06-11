@@ -1,5 +1,5 @@
-import { EOrderSide, EOrderStatus } from "../enums/orders";
-import { ordersModel } from "../models/orders";
+import { EOrderSide, EOrderStatus } from '../enums/orders';
+import { ordersModel } from '../models/orders';
 
 export const round = (num: number, decimals = 2) => {
   const factor = Math.pow(10, decimals);

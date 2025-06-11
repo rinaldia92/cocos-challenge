@@ -9,6 +9,9 @@ import { getInstrumentById } from '../repositories/instruments';
 import { marketDataModel } from '../models/marketData';
 import { getUserById } from '../repositories/users';
 import { calculateAvailableCash } from '../utils/commons';
+import { createNamedLogger } from '../utils/logger';
+
+const logger = createNamedLogger('OrderServices');
 
 const calculateSize = (amount: number, price: number) => {
   return Math.floor(amount / price);
@@ -25,6 +28,7 @@ const createBuyOrder = async ({
   orderToCreate: Partial<ordersModel>;
   marketData: marketDataModel;
 }) => {
+  logger.info(`Creating buy order for user ${orderRequest.userId}`);
   const currentPrice = marketData.close;
 
   const availableCash = calculateAvailableCash(orders);
@@ -42,9 +46,18 @@ const createBuyOrder = async ({
   orderToCreate.datetime = new Date();
 
   if (totalAmount > availableCash) {
+    logger.debug(
+      `Buy order rejected for user ${orderRequest.userId} because total amount is greater than available cash`,
+    );
     orderToCreate.status = EOrderStatus.REJECTED;
   } else {
-    orderToCreate.status = orderRequest.type === EOrderType.MARKET ? EOrderStatus.FILLED : EOrderStatus.NEW;
+    if (orderRequest.type === EOrderType.MARKET) {
+      logger.debug(`Buy order filled for user ${orderRequest.userId}`);
+      orderToCreate.status = EOrderStatus.FILLED;
+    } else {
+      logger.debug(`Buy order new for user ${orderRequest.userId}`);
+      orderToCreate.status = EOrderStatus.NEW;
+    }
   }
 };
 
@@ -59,6 +72,7 @@ const createSellOrder = async ({
   orderToCreate: Partial<ordersModel>;
   marketData: marketDataModel;
 }) => {
+  logger.info(`Creating sell order for user ${orderRequest.userId}`);
   const ordersToUse = orders.filter((order) => order.instrumentId === orderRequest.instrumentId);
   const netQuantity = ordersToUse.reduce((acc, order) => {
     if (order.side === EOrderSide.BUY) {
@@ -71,11 +85,16 @@ const createSellOrder = async ({
   orderToCreate.price = marketData.close;
 
   if (netQuantity < orderRequest.quantity!) {
+    logger.debug(
+      `Sell order rejected for user ${orderRequest.userId} because net quantity is less than quantity`,
+    );
     orderToCreate.status = EOrderStatus.REJECTED;
   } else {
     if (orderRequest.type === EOrderType.MARKET) {
+      logger.debug(`Sell order filled for user ${orderRequest.userId}`);
       orderToCreate.status = EOrderStatus.FILLED;
     } else {
+      logger.debug(`Sell order new for user ${orderRequest.userId}`);
       orderToCreate.status = EOrderStatus.NEW;
     }
   }
@@ -88,21 +107,27 @@ const createOrderStrategy: { [key in EOrderSide]?: (args: any) => Promise<void> 
 
 export const createOrderService = async (orderRequest: IOrderRequest) => {
   return appDataSource.transaction(async (manager) => {
+    logger.info(`Creating order for user ${orderRequest.userId}`);
+
+    logger.debug(`Getting user ${orderRequest.userId}`);
     const user = await getUserById(orderRequest.userId, manager);
     if (!user) {
       throw notFoundError('User not found');
     }
 
+    logger.debug(`Getting instrument ${orderRequest.instrumentId}`);
     const instrument = await getInstrumentById(orderRequest.instrumentId, manager);
     if (!instrument) {
       throw notFoundError('Instrument not found');
     }
 
+    logger.debug(`Getting market data for instrument ${orderRequest.instrumentId}`);
     const marketData = await getLastMarketDataByInstrumentId(orderRequest.instrumentId, manager);
     if (!marketData) {
       throw notFoundError('Market data not found');
     }
 
+    logger.debug(`Getting orders for user ${orderRequest.userId}`);
     const orders = await getOrdersBy(
       { userId: orderRequest.userId, status: EOrderStatus.FILLED },
       manager,
@@ -125,6 +150,7 @@ export const createOrderService = async (orderRequest: IOrderRequest) => {
     await createOrderFunction({ orderRequest, orders, orderToCreate, marketData });
 
     const order = await createOrderRepository(orderToCreate, manager);
+    logger.info(`Order created for user ${orderRequest.userId}: ${JSON.stringify(order)}`);
     return order;
   });
 };

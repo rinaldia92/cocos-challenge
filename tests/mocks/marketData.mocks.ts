@@ -1269,8 +1269,12 @@ export const getMarketDataByInstrumentIdsMock = (instrumentIds: number[]): marke
   ) as marketDataModel[];
 };
 
-export const getLastMarketDataByInstrumentIdMock = (instrumentId: number): marketDataModel | null => {
-  const filteredMarketData = marketData.filter((marketData) => marketData.instrumentId === instrumentId);
+export const getLastMarketDataByInstrumentIdMock = (
+  instrumentId: number,
+): marketDataModel | null => {
+  const filteredMarketData = marketData.filter(
+    (marketData) => marketData.instrumentId === instrumentId,
+  );
   const sortedMarketData = filteredMarketData.sort((a, b) => b.date.getTime() - a.date.getTime());
   return sortedMarketData[0] as marketDataModel | null;
 };
