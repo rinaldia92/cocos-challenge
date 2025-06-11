@@ -1,7 +1,11 @@
 import { DataSource } from 'typeorm';
 import { config } from './index';
+import { join } from 'path';
 
 const isDevelopment = config.environment === 'development';
+
+// Determinar el directorio base según el entorno
+const baseDir = isDevelopment ? 'src' : 'dist';
 
 export const appDataSource = new DataSource({
   type: 'postgres',
@@ -12,8 +16,8 @@ export const appDataSource = new DataSource({
   database: process.env.DB_NAME || 'cocos_db',
   synchronize: false,
   logging: ['query'],
-  entities: isDevelopment ? ['src/models/**/*.ts'] : ['dist/models/**/*.js'],
-  migrations: isDevelopment ? ['src/migrations/**/*.ts'] : ['dist/migrations/**/*.js'],
+  entities: [join(baseDir, 'models', '**', isDevelopment ? '*.ts' : '*.js')],
+  migrations: [join(baseDir, 'migrations', '**', isDevelopment ? '*.ts' : '*.js')],
   ssl: {
     rejectUnauthorized: false, // Permite conexiones sin certificado SSL válido (solo para desarrollo)
   },

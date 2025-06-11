@@ -19,10 +19,10 @@ describe('Instruments Controller', () => {
       const response = await request(app).get('/v1/api/instruments');
 
       expect(response.status).toBe(200);
-      expect(Array.isArray(response.body)).toBe(true);
-      expect(response.body.length).toBeGreaterThan(0);
+      expect(Array.isArray(response.body.instruments)).toBe(true);
+      expect(response.body.instruments.length).toBeGreaterThan(0);
 
-      response.body.forEach((instrument: instrumentsModel) => {
+      response.body.instruments.forEach((instrument: instrumentsModel) => {
         expect(instrument).toHaveProperty('id');
         expect(instrument).toHaveProperty('ticker');
         expect(instrument).toHaveProperty('name');
@@ -35,10 +35,10 @@ describe('Instruments Controller', () => {
       const response = await request(app).get('/v1/api/instruments?page=1&limit=10');
 
       expect(response.status).toBe(200);
-      expect(Array.isArray(response.body)).toBe(true);
-      expect(response.body.length).toBeGreaterThan(0);
+      expect(Array.isArray(response.body.instruments)).toBe(true);
+      expect(response.body.instruments.length).toBeGreaterThan(0);
 
-      response.body.forEach((instrument: instrumentsModel) => {
+      response.body.instruments.forEach((instrument: instrumentsModel) => {
         expect(instrument).toHaveProperty('id');
         expect(instrument).toHaveProperty('ticker');
         expect(instrument).toHaveProperty('name');
@@ -51,7 +51,7 @@ describe('Instruments Controller', () => {
       const response = await request(app).get('/v1/api/instruments?page=10000&limit=10000');
 
       expect(response.status).toBe(200);
-      expect(response.body.length).toBe(0);
+      expect(response.body.instruments.length).toBe(0);
     });
 
     test('should get instruments by valid ticker', async () => {
@@ -59,8 +59,8 @@ describe('Instruments Controller', () => {
       const response = await request(app).get('/v1/api/instruments?ticker=DYCA');
 
       expect(response.status).toBe(200);
-      expect(response.body.length).toBe(1);
-      expect(response.body[0].ticker).toBe('DYCA');
+      expect(response.body.instruments.length).toBe(1);
+      expect(response.body.instruments[0].ticker).toBe('DYCA');
     });
 
     test('should get instruments by valid name', async () => {
@@ -75,7 +75,7 @@ describe('Instruments Controller', () => {
       const response = await request(app).get('/v1/api/instruments?ticker=INVALID_TICKER');
 
       expect(response.status).toBe(200);
-      expect(response.body.length).toBe(0);
+      expect(response.body.instruments.length).toBe(0);
     });
 
     test('should fail with database error', async () => {
